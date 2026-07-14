@@ -1,0 +1,9 @@
+# Frontend ESLint + Prettier config
+{
+  "extends": ["next", "next/core-web-vitals", "prettier"],
+  "plugins": ["@next/eslint-plugin-next"],
+  "rules": {
+    "@next/next/no-page-custom-font-loader": "off",
+    "react/display-name": "warn"
+  }
+}

@@ -1,0 +1,21 @@
+:root{
+  --bg:#14C4C4;
+  --card:#FFFFFF;
+  --muted:#5C5C4D;
+  --accent:#0B0B0F;
+  --primary:#FFE500;
+  --accent-2:#FFE500;
+  --glass: rgba(255,255,255,0.82);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #0A8A8A 0%, #0FB0B0 25%, #14C4C4 50%, #B8EFEF 75%, #D8F8F8 100%);
+  color: var(--accent);
+}
