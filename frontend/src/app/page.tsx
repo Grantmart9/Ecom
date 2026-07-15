@@ -583,7 +583,7 @@ const Nav = () => {
           {/* Middle layer */}
           <path
             fill="url(#yellowMiddle)"
-            transform="translate(0 -25)"
+            transform="translate(0 -30)"
             d={`
               M0 0 H1440 V70
               ${wave}
@@ -593,7 +593,7 @@ const Nav = () => {
           {/* Back / highest layer */}
           <path
             fill="url(#yellowBack)"
-            transform="translate(0 -50)"
+            transform="translate(0 -80)"
             d={`
               M0 0 H1440 V70
               ${wave}

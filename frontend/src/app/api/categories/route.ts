@@ -84,7 +84,8 @@ export async function GET(req: NextRequest) {
     });
   } catch (e) {
     console.error('[api/categories]', e);
-    return NextResponse.json({ detail: 'Server error' }, { status: 500 });
+    const message = e instanceof Error ? e.message : 'Server error';
+    return NextResponse.json({ detail: message }, { status: 500 });
   }
 }
 
@@ -151,6 +152,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ detail: e.issues[0].message }, { status: 400 });
     }
     console.error('[api/categories]', e);
-    return NextResponse.json({ detail: 'Server error' }, { status: 500 });
+    const message = e instanceof Error ? e.message : 'Server error';
+    return NextResponse.json({ detail: message }, { status: 500 });
   }
 }

@@ -124,7 +124,8 @@ export async function GET(req: NextRequest) {
     });
   } catch (e) {
     console.error('[api/products]', e);
-    return NextResponse.json({ detail: 'Server error' }, { status: 500 });
+    const message = e instanceof Error ? e.message : 'Server error';
+    return NextResponse.json({ detail: message }, { status: 500 });
   }
 }
 
