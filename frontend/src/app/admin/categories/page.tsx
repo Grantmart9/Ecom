@@ -24,9 +24,10 @@ import {
   InputLabel,
   FormControl,
   Chip,
+  Alert,
 } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
-import { useState } from 'react';
+import { Edit, Delete, Add, Upload } from '@mui/icons-material';
+import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 type CategoryStatus = 'active' | 'inactive' | 'archived';
@@ -59,6 +60,9 @@ export default function CategoriesPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Partial<Category> | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [formError, setFormError] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
 
@@ -159,6 +163,26 @@ export default function CategoriesPage() {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setFormError('');
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
+      if (!res.ok) throw new Error((await res.json())?.detail ?? 'Upload failed');
+      const data = await res.json();
+      setEditingCategory((c) => c && { ...c, image: data.url });
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   const getParentName = (parentId: number | null) => {
     return data?.data?.find((c: Category) => c.id === parentId)?.name || '-';
   };
@@ -219,6 +243,7 @@ export default function CategoriesPage() {
         <form onSubmit={handleSave}>
           <DialogTitle>{editingCategory?.id ? 'Edit Category' : 'Add Category'}</DialogTitle>
           <DialogContent sx={{ pt: 2 }}>
+            {formError && <Alert severity="error" sx={{ mb: 2 }}>{formError}</Alert>}
             <TextField
               label="Name"
               value={editingCategory?.name ?? ''}
@@ -245,13 +270,41 @@ export default function CategoriesPage() {
               rows={3}
               margin="dense"
             />
-            <TextField
-              label="Image URL"
-              value={editingCategory?.image ?? ''}
-              onChange={(e) => setEditingCategory((c) => c && { ...c, image: e.target.value })}
-              fullWidth
-              margin="dense"
-            />
+            <Box sx={{ mb: 1 }}>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <TextField
+                  label="Image URL"
+                  value={editingCategory?.image ?? ''}
+                  onChange={(e) => setEditingCategory((c) => c && { ...c, image: e.target.value })}
+                  fullWidth
+                  margin="dense"
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleImageUpload}
+                />
+                <Button
+                  type="button"
+                  variant="outlined"
+                  startIcon={<Upload />}
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  sx={{ mt: 1, whiteSpace: 'nowrap' }}
+                >
+                  {uploading ? 'Uploading…' : 'Upload'}
+                </Button>
+              </Box>
+              {editingCategory?.image && (
+                <Box
+                  component="img"
+                  src={editingCategory.image}
+                  sx={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 1, mt: 1 }}
+                />
+              )}
+            </Box>
             <TextField
               label="Sort Order"
               type="number"

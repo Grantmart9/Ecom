@@ -19,8 +19,8 @@ const createProductSchema = z.object({
   sku: z.string().min(1, 'SKU is required').max(100),
   categoryId: z.number().int().positive('Category is required'),
   images: z.array(z.object({
-    imageUrl: z.string().url('Invalid image URL'),
-    altText: z.string().optional(),
+    imageUrl: z.string().min(1, 'Image URL is required'),
+    altText: z.string().nullable().optional(),
     isPrimary: z.boolean().optional(),
   })).optional(),
   stockQuantity: z.number().int().nonnegative().default(0),

@@ -14,7 +14,7 @@ const updateCategorySchema = z.object({
   slug: z.string().min(1, 'Slug is required').max(100).optional(),
   description: z.string().max(1000).optional(),
   parentId: z.number().int().positive().nullable().optional(),
-  image: z.string().url().optional().or(z.literal('')),
+  image: z.string().optional().nullable(),
   status: z.enum(['active', 'inactive', 'archived']).optional(),
   sortOrder: z.number().int().optional(),
 });

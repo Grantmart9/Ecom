@@ -29,8 +29,8 @@ import {
   Paper,
   InputAdornment,
 } from '@mui/material';
-import { Edit, Delete, Add, Search as SearchIcon } from '@mui/icons-material';
-import { useState } from 'react';
+import { Edit, Delete, Add, Upload, Search as SearchIcon } from '@mui/icons-material';
+import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 type ProductStatus = 'draft' | 'active' | 'inactive' | 'archived';
@@ -83,6 +83,8 @@ export default function ProductsPage() {
   const [page, setPage] = useState(0);
   const [imageUrlInput, setImageUrlInput] = useState('');
   const [formError, setFormError] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [deleteError, setDeleteError] = useState('');
 
   const queryClient = useQueryClient();
@@ -247,6 +249,32 @@ export default function ProductsPage() {
     const newImages = [...(editingProduct.images || [])];
     newImages.splice(index, 1);
     setEditingProduct({ ...editingProduct, images: newImages });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setFormError('');
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
+      if (!res.ok) throw new Error((await res.json())?.detail ?? 'Upload failed');
+      const data = await res.json();
+      setEditingProduct({
+        ...editingProduct,
+        images: [
+          ...(editingProduct.images || []),
+          { imageUrl: data.url, altText: '', isPrimary: (editingProduct.images || []).length === 0 },
+        ],
+      });
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const products = productsData?.data ?? [];
@@ -527,8 +555,26 @@ export default function ProductsPage() {
                     size="small"
                     placeholder="https://example.com/image.jpg"
                   />
-                  <Button variant="outlined" onClick={addImage} disabled={!imageUrlInput.trim()}>
+                  <Button type="button" variant="outlined" onClick={addImage} disabled={!imageUrlInput.trim()}>
                     <Add />
+                  </Button>
+                </Box>
+                <Box sx={{ mb: 1 }}>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={handleFileChange}
+                  />
+                  <Button
+                    type="button"
+                    variant="outlined"
+                    startIcon={<Upload />}
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                  >
+                    {uploading ? 'Uploading…' : 'Upload from device'}
                   </Button>
                 </Box>
                 {editingProduct.images && editingProduct.images.length > 0 && (
@@ -539,6 +585,7 @@ export default function ProductsPage() {
                         <IconButton
                           size="small"
                           sx={{ position: 'absolute', top: -8, right: -8, bgcolor: 'error.main', color: 'white', width: 20, height: 20 }}
+                          type="button"
                           onClick={() => removeImage(idx)}
                         >
                           <Delete fontSize="small" />

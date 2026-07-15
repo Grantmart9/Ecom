@@ -19,8 +19,8 @@ const updateProductSchema = z.object({
   categoryId: z.number().int().positive().optional(),
   images: z.array(z.object({
     id: z.number().optional(),
-    imageUrl: z.string().url(),
-    altText: z.string().optional(),
+    imageUrl: z.string().min(1, 'Image URL is required'),
+    altText: z.string().nullable().optional(),
     isPrimary: z.boolean().optional(),
   })).optional(),
   stockQuantity: z.number().int().nonnegative().optional(),
