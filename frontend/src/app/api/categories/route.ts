@@ -13,7 +13,7 @@ const createCategorySchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
   slug: z.string().min(1, 'Slug is required').max(100),
   description: z.string().max(1000).optional(),
-  parentId: z.number().int().positive().optional(),
+  parentId: z.number().int().positive().nullable().optional(),
   image: z.string().url().optional().or(z.literal('')),
   status: z.enum(['active', 'inactive', 'archived']).default('active'),
   sortOrder: z.number().int().default(0),
