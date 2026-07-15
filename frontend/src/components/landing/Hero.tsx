@@ -25,7 +25,10 @@ export default function Hero() {
   useShopNow();
 
   return (
-    <Box component="section" sx={{ position: 'relative', pt: { xs: 6, md: 10 }, pb: { xs: 12, md: 20 } }}>
+    <Box
+      component="section"
+      sx={{ position: 'relative', pt: { xs: 6, md: 10 }, pb: { xs: 12, md: 20 } }}
+    >
       <Box
         aria-hidden
         sx={{
@@ -42,7 +45,11 @@ export default function Hero() {
         }}
       />
       <Container maxWidth="lg" sx={{ position: 'relative' }}>
-        <Box component={motion.div} variants={fadeUp} sx={{ textAlign: 'center', mb: { xs: 4, md: 6 }, mt: { xs: -10, md: -20 } }}>
+        <Box
+          component={motion.div}
+          variants={fadeUp}
+          sx={{ textAlign: 'center', mb: { xs: 4, md: 6 }, mt: { xs: -10, md: -20 } }}
+        >
           <Typography
             style={{
               color: '#fff',
@@ -58,7 +65,13 @@ export default function Hero() {
       </Container>
 
       <Container maxWidth="lg" sx={{ position: 'relative', mt: { xs: 4, md: 2 } }}>
-        <Box component={motion.div} variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
+        <Box
+          component={motion.div}
+          variants={stagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           <Box component={motion.div} variants={fadeUp} />
 
           <Typography
@@ -158,7 +171,7 @@ export default function Hero() {
               <video
                 autoPlay
                 loop
-                muted
+                muted={true}
                 playsInline
                 style={{
                   position: 'absolute',

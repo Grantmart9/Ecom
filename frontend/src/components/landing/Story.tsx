@@ -47,35 +47,22 @@ export default function Story() {
             </Typography>
           </Box>
           <Box
-            component={motion.div}
-            variants={fadeUp}
+            component="img"
+            src="/product.png"
+            alt="Product"
             sx={{
               position: 'relative',
               width: '100%',
-              paddingTop: '56.25%',
+              height:'100%',
+             
               borderRadius: 4,
               overflow: 'hidden',
               bgcolor: 'background.paper',
               border: '1px solid',
               borderColor: 'divider',
+              objectFit: 'cover',
             }}
-          >
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              style={{
-                position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-              }}
-            >
-              <source src="/video/landing-hero.mp4" type="video/mp4" />
-            </video>
-          </Box>
+          />
         </Box>
       </Container>
     </Box>
