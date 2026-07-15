@@ -82,6 +82,8 @@ export default function ProductsPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(0);
   const [imageUrlInput, setImageUrlInput] = useState('');
+  const [formError, setFormError] = useState('');
+  const [deleteError, setDeleteError] = useState('');
 
   const queryClient = useQueryClient();
 
@@ -125,7 +127,9 @@ export default function ProductsPage() {
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });
       setDialogOpen(false);
       setEditingProduct(emptyFormData);
+      setFormError('');
     },
+    onError: (err: Error) => setFormError(err.message),
   });
 
   const updateMutation = useMutation({
@@ -144,7 +148,9 @@ export default function ProductsPage() {
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });
       setDialogOpen(false);
       setEditingProduct(emptyFormData);
+      setFormError('');
     },
+    onError: (err: Error) => setFormError(err.message),
   });
 
   const deleteMutation = useMutation({
@@ -158,7 +164,9 @@ export default function ProductsPage() {
       queryClient.invalidateQueries({ queryKey: ['products'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });
       setDeleteId(null);
+      setDeleteError('');
     },
+    onError: (err: Error) => setDeleteError(err.message),
   });
 
   const handleEdit = (product: Product) => {
@@ -181,11 +189,16 @@ export default function ProductsPage() {
   const handleAdd = () => {
     setEditingProduct(emptyFormData);
     setDialogOpen(true);
+    setFormError('');
   };
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingProduct.name?.trim() || !editingProduct.slug?.trim() || editingProduct.price == null || !editingProduct.sku?.trim() || !editingProduct.categoryId) return;
+    setFormError('');
+    if (!editingProduct.name?.trim() || !editingProduct.slug?.trim() || editingProduct.price == null || !editingProduct.sku?.trim() || !editingProduct.categoryId) {
+      setFormError('Please fill in all required fields and select a category.');
+      return;
+    }
 
     const productData = {
       name: editingProduct.name,
@@ -408,6 +421,7 @@ export default function ProductsPage() {
         <form onSubmit={handleSave}>
           <DialogTitle>{editingProduct.id ? 'Edit Product' : 'Add Product'}</DialogTitle>
           <DialogContent sx={{ pt: 2 }}>
+            {formError && <Alert severity="error" sx={{ mb: 2 }}>{formError}</Alert>}
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <TextField
@@ -467,11 +481,12 @@ export default function ProductsPage() {
                 <FormControl fullWidth>
                   <InputLabel>Category</InputLabel>
                   <Select
-                    value={editingProduct.categoryId ?? ''}
+                    value={editingProduct.categoryId || ''}
                     label="Category"
-                    onChange={(e) => setEditingProduct({ ...editingProduct, categoryId: Number(e.target.value) })}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, categoryId: e.target.value ? Number(e.target.value) : 0 })}
                     required
                   >
+                    <MenuItem value="">Select a category</MenuItem>
                     {categories.map((c: Category) => (
                       <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>
                     ))}
@@ -536,7 +551,7 @@ export default function ProductsPage() {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button type="button" onClick={() => setDialogOpen(false)}>Cancel</Button>
             <Button type="submit" variant="contained" disabled={createMutation.isPending || updateMutation.isPending}>
               {editingProduct.id ? 'Update' : 'Create'}
             </Button>
@@ -544,15 +559,16 @@ export default function ProductsPage() {
         </form>
       </Dialog>
 
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
+      <Dialog open={!!deleteId} onClose={() => { setDeleteId(null); setDeleteError(''); }}>
         <DialogTitle>Delete Product?</DialogTitle>
         <DialogContent>
-          <Typography>This will archive the product. It will no longer be visible to customers.</Typography>
+          {deleteError && <Alert severity="error" sx={{ mb: 2 }}>{deleteError}</Alert>}
+          <Typography>This will permanently delete the product and cannot be undone.</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteId(null)}>Cancel</Button>
-          <Button onClick={confirmDelete} color="error" variant="contained">
-            Archive
+          <Button onClick={() => { setDeleteId(null); setDeleteError(''); }}>Cancel</Button>
+          <Button onClick={confirmDelete} color="error" variant="contained" disabled={deleteMutation.isPending}>
+            {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
           </Button>
         </DialogActions>
       </Dialog>

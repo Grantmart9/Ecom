@@ -293,7 +293,7 @@ export default function CategoriesPage() {
             </FormControl>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button type="button" onClick={() => setDialogOpen(false)}>Cancel</Button>
             <Button type="submit" variant="contained">
               {editingCategory?.id ? 'Update' : 'Create'}
             </Button>

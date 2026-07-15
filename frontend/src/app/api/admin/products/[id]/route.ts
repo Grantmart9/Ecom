@@ -2,7 +2,7 @@
  * Admin single product API route - update and delete products.
  */
 import { NextResponse } from 'next/server';
-import { products, productImages, inventory } from '@/db/schema';
+import { products, productImages, inventory, orderItems, cartItems, reviews } from '@/db/schema';
 import type { NextRequest } from 'next/server';
 import { eq, and, sql } from 'drizzle-orm';
 import { z } from 'zod';
@@ -197,12 +197,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 /**
- * DELETE /api/admin/products/[id] - Soft delete product (archive)
+ * DELETE /api/admin/products/[id] - Permanently delete product and related records
  */
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const [{ db }] = await Promise.all([import('@/db/client'), import('drizzle-orm')]);
+    const [{ db }, { eq }] = await Promise.all([import('@/db/client'), import('drizzle-orm')]);
 
     const productId = Number(id);
     if (isNaN(productId)) {
@@ -214,10 +214,14 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       return NextResponse.json({ detail: 'Product not found' }, { status: 404 });
     }
 
-    const now = new Date();
-    await db.update(products).set({ status: 'archived', isActive: false, isDeleted: true, updatedAt: now }).where(eq(products.id, productId));
+    await db.delete(productImages).where(eq(productImages.productId, productId));
+    await db.delete(inventory).where(eq(inventory.productId, productId));
+    await db.delete(orderItems).where(eq(orderItems.productId, productId));
+    await db.delete(cartItems).where(eq(cartItems.productId, productId));
+    await db.delete(reviews).where(eq(reviews.productId, productId));
+    await db.delete(products).where(eq(products.id, productId));
 
-    return NextResponse.json({ success: true, message: 'Product archived' });
+    return NextResponse.json({ success: true, message: 'Product permanently deleted' });
   } catch (e) {
     console.error('[api/admin/products/[id]]', e);
     return NextResponse.json({ detail: 'Server error' }, { status: 500 });

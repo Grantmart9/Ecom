@@ -315,7 +315,7 @@ export default function CouponsPage() {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button type="button" onClick={() => setDialogOpen(false)}>Cancel</Button>
             <Button type="submit" variant="contained">
               {editingCoupon?.id ? 'Update' : 'Create'}
             </Button>
