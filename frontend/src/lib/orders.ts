@@ -159,7 +159,6 @@ async function enqueueCustomerNotification({
     title,
     message,
     isRead: false,
-    data: JSON.stringify({ orderId, status, trackingNumber, shippingCarrier }),
     createdAt: new Date(),
   });
 }

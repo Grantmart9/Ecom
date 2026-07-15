@@ -395,12 +395,23 @@ export const notifications = pgTable('notifications', {
   title: varchar('title', { length: 255 }).notNull(),
   message: text('message').notNull(),
   isRead: boolean('is_read').default(false).notNull(),
-  data: text('data'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 }, (table) => ({
   userIdIdx: index('idx_notifications_user_id').on(table.userId),
-  isReadIdx: index('idx_notifications_is_read').on(table.isRead),
+  typeIdx: index('idx_notifications_type').on(table.type),
 }));
+
+export const storeSettings = pgTable('store_settings', {
+  id: serial('id').primaryKey(),
+  storeName: varchar('store_name', { length: 255 }).notNull(),
+  currency: varchar('currency', { length: 3 }).notNull(),
+  taxRate: numeric('tax_rate', { precision: 5, scale: 2 }).default('0').notNull(),
+  emailNotifications: boolean('email_notifications').default(true).notNull(),
+  shippingZones: text('shipping_zones').notNull().default('[]'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
 
 export type User = InferModel<typeof users>;
 export type NewUser = InferModel<typeof users, 'insert'>;

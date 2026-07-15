@@ -185,7 +185,7 @@ export default function ProductsPage() {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingProduct.name || !editingProduct.slug || !editingProduct.price || !editingProduct.sku || !editingProduct.categoryId) return;
+    if (!editingProduct.name?.trim() || !editingProduct.slug?.trim() || editingProduct.price == null || !editingProduct.sku?.trim() || !editingProduct.categoryId) return;
 
     const productData = {
       name: editingProduct.name,

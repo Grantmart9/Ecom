@@ -5,7 +5,7 @@
 import { NextResponse } from 'next/server';
 import { products, productImages, inventory, categories } from '@/db/schema';
 import type { NextRequest } from 'next/server';
-import { eq, and, ilike, count, desc } from 'drizzle-orm';
+import { eq, and, ilike, count, desc, or } from 'drizzle-orm';
 import { z } from 'zod';
 
 export const runtime = 'nodejs';
@@ -76,11 +76,10 @@ export async function GET(req: NextRequest) {
     }
     if (searchQuery) {
       const searchPattern = `%${searchQuery}%`;
-      conditions.push(
-        ilike(products.name, searchPattern) ||
-        ilike(products.sku, searchPattern) ||
-        ilike(products.description, searchPattern)
-      );
+      const searchCondition = or(ilike(products.name, searchPattern), ilike(products.sku, searchPattern), ilike(products.description, searchPattern));
+      if (searchCondition) {
+        conditions.push(searchCondition);
+      }
     }
 
     // Fetch products with pagination

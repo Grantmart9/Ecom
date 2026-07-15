@@ -13,9 +13,10 @@ import {
   Switch,
   FormControlLabel,
   Alert,
+  CircularProgress,
 } from '@mui/material';
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect, useRef } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 type Settings = {
   storeName: string;
@@ -35,6 +36,31 @@ export default function SettingsPage() {
   });
 
   const queryClient = useQueryClient();
+  const settingsLoaded = useRef(false);
+
+  const { data: savedSettings, isLoading: settingsLoading, error: settingsError } = useQuery({
+    queryKey: ['admin-settings'],
+    queryFn: async () => {
+      const res = await fetch('/api/admin/settings');
+      if (!res.ok) throw new Error('Failed to fetch settings');
+      return res.json();
+    },
+  });
+
+  useEffect(() => {
+    if (savedSettings && !settingsLoaded.current) {
+      settingsLoaded.current = true;
+      setSettings({
+        storeName: savedSettings.storeName || 'Recovery Co.',
+        currency: savedSettings.currency || 'USD',
+        taxRate: savedSettings.taxRate ?? 0,
+        shippingZones: Array.isArray(savedSettings.shippingZones) && savedSettings.shippingZones.length > 0
+          ? savedSettings.shippingZones
+          : [{ name: 'Domestic', price: 0 }],
+        emailNotifications: !!savedSettings.emailNotifications,
+      });
+    }
+  }, [savedSettings]);
 
   const saveMutation = useMutation({
     mutationFn: async (data: Settings) => {
@@ -59,7 +85,18 @@ export default function SettingsPage() {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Typography variant="h4" sx={{ mb: 3 }}>Settings</Typography>
 
-      <Paper sx={{ p: 3, mb: 3 }}>
+      {settingsLoading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+          <CircularProgress />
+        </Box>
+      )}
+
+      {settingsError && <Alert severity="error" sx={{ mb: 2 }}>Failed to load settings.</Alert>}
+
+      {!settingsLoading && !settingsError && (
+        <>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" sx={{ mb: 2 }}>Store Configuration</Typography>
 
         <TextField
@@ -144,6 +181,9 @@ export default function SettingsPage() {
 
       {saveMutation.isError && <Alert severity="error" sx={{ mt: 2 }}>Failed to save settings</Alert>}
       {saveMutation.isSuccess && <Alert severity="success" sx={{ mt: 2 }}>Settings saved successfully</Alert>}
+      </Box>
+      </>
+      )}
     </Container>
   );
 }

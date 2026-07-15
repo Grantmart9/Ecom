@@ -1,7 +1,7 @@
 'use client';
 
 import { Container, Box, Typography, Card, CardContent, Table, TableHead, TableBody, TableRow, TableCell, Chip, Button, TextField, Select, MenuItem, FormControl, InputLabel, Divider, CircularProgress, Alert, Snackbar } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 
@@ -26,9 +26,9 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
 
   const queryClient = useQueryClient();
 
-  useState(() => {
+  useEffect(() => {
     params.then((p) => setOrderId(p.id));
-  });
+  }, [params]);
 
   const { data: orderData, isLoading, error } = useQuery({
     queryKey: ['admin-order', orderId],

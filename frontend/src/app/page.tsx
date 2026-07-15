@@ -869,9 +869,15 @@ function Featured() {
 
   React.useEffect(() => {
     fetch(`${API}/products`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`Products ${r.status}`);
+        return r.json();
+      })
       .then((data) => setProducts((data?.data ?? []).slice(0, 6)))
-      .catch(() => setProducts([]))
+      .catch((e) => {
+        console.error('[home/products]', e);
+        setProducts([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 

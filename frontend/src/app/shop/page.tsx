@@ -83,16 +83,22 @@ export default function Shop() {
       if (selectedCategory) params.set('categoryId', String(selectedCategory));
       
       const res = await fetch(`${API_URL_BASE}/products?${params.toString()}`);
-      if (!res.ok) throw new Error(`Products ${res.status}`);
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(`Products ${res.status}: ${body.detail || res.statusText}`);
+      }
       return res.json();
     },
   });
 
-  const { data: categoriesData } = useQuery({
+  const { data: categoriesData, error: categoriesError } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
       const res = await fetch(`${API_URL_BASE}/categories`);
-      if (!res.ok) throw new Error('Failed to fetch categories');
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(`Categories ${res.status}: ${body.detail || res.statusText}`);
+      }
       return res.json();
     },
   });
@@ -155,9 +161,12 @@ export default function Shop() {
         )}
 
         {/* Error state */}
-        {error && (
+        {(error || categoriesError) && (
           <Box component={motion.div} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-            <Typography color="error.main">Error: {String(error)}</Typography>
+            <Typography color="error.main">
+              {error ? String(error) : ''}
+              {categoriesError ? String(categoriesError) : ''}
+            </Typography>
           </Box>
         )}
 
