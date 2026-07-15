@@ -20,7 +20,7 @@ const theme = createTheme({
     text: { primary: '#0B0B0F', secondary: '#FFE500' },
     divider: 'rgba(11,11,15,0.12)',
   },
-  typography: { fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif' },
+  typography: { fontFamily: '"Glacial Indifference", sans-serif' },
   shape: { borderRadius: 12 },
 })
 

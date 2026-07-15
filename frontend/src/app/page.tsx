@@ -352,7 +352,7 @@ const Nav = () => {
                               {item.name}
                             </Typography>
                             <Typography sx={{ color: '#fff', opacity: 0.85, fontSize: '0.8rem' }}>
-                              R{Number(item.price).toFixed(2)}
+                              ${Number(item.price).toFixed(2)}
                             </Typography>
                             <Box
                               sx={{
@@ -406,7 +406,7 @@ const Nav = () => {
                             </Box>
                           </Box>
                           <Typography sx={{ color: '#fff', fontWeight: 700, whiteSpace: 'nowrap' }}>
-                            R{(Number(item.price) * item.quantity).toFixed(2)}
+                            ${(Number(item.price) * item.quantity).toFixed(2)}
                           </Typography>
                         </Box>
                       ))}
@@ -639,7 +639,6 @@ function Hero() {
             style={{
               color: '#fff',
               fontWeight: 400,
-              fontFamily: 'glacier, sans-serif',
               fontSize: '3rem',
               letterSpacing: '0.08em',
               textDecoration: 'none',
@@ -650,33 +649,7 @@ function Hero() {
         </Box>
       </Container>
 
-      <Box
-        sx={{
-          position: 'relative',
-          width: '100%',
-          paddingTop: '56.25%',
-          bgcolor: 'background.paper',
-          overflow: 'hidden',
-        }}
-      >
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        >
-                <source src="/video/landing-hero.mp4" type="video/mp4" />
-        </video>
-      </Box>
-
-      <Container maxWidth="lg" sx={{ position: 'relative', mt: { xs: 4, md: 6 } }}>
+      <Container maxWidth="lg" sx={{ position: 'relative', mt: { xs: 4, md: 2 } }}>
         <Box
           component={motion.div}
           variants={stagger}
@@ -695,8 +668,8 @@ function Hero() {
               lineHeight: 0.98,
               letterSpacing: '-0.03em',
               mb: 4,
-              mt: { xs: 4, md: 20 },
-              maxWidth: 1100,
+              mt: { xs: 4, md: 0 },
+              maxWidth: 800,
               display: 'inline-block',
 
               px: 1.5,
@@ -774,23 +747,28 @@ function Hero() {
                 position: 'relative',
                 width: '100%',
                 paddingTop: '100%',
-                borderRadius: 4,
+                borderRadius: 2,
                 overflow: 'hidden',
                 bgcolor: 'background.paper',
                 border: '1px solid',
                 borderColor: 'divider',
               }}
             >
-              <Box
-                sx={{
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={{
                   position: 'absolute',
                   inset: 0,
-                  backgroundImage: 'url(/product-default.png)',
-                  backgroundSize: 'contain',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat',
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
                 }}
-              />
+              >
+                <source src="/video/landing-hero.mp4" type="video/mp4" />
+              </video>
             </Box>
           </Box>
         </Box>
@@ -828,11 +806,17 @@ function Story() {
                 color: 'black',
               }}
             >
-              More about our story coming soon.
+              More about our story
             </Typography>
             <Typography sx={{ color: 'black', lineHeight: 1.7, maxWidth: 480 }}>
-              We&apos;re putting together a short film about how Recovery Co. started, the people
-              behind it, and why we do what we do. Stay tuned.
+              Recovery Co. was born from a simple challenge familiar to many parents: making daily
+              immune support easy for children. Inspired by the realities of raising a busy toddler,
+              we created Super Sprinkle—a tasteless, fully soluble daily immune support powder that
+              blends effortlessly into the foods and drinks kids already enjoy. Made with carefully
+              selected, science-backed ingredients, our mission is to help families build healthy
+              habits through simple, effective products that fit naturally into everyday life,
+              giving parents confidence in the small choices that support their children&apos;s
+              wellbeing.
             </Typography>
           </Box>
           <Box
@@ -862,7 +846,7 @@ function Story() {
                 objectFit: 'cover',
               }}
             >
-              <source src="/video/child-nutrients.mp4" type="video/mp4" />
+              <source src="/video/landing-hero.mp4" type="video/mp4" />
             </video>
           </Box>
         </Box>
@@ -914,10 +898,9 @@ function Featured() {
                 maxWidth: 700,
               }}
             >
-              Handpicked, and ready to ship.
+              Our product
             </Typography>
           </Box>
-       
         </Box>
 
         {loading ? (
@@ -1011,7 +994,7 @@ function Featured() {
                         <Typography
                           sx={{ fontWeight: 700, fontSize: '1.3rem', color: 'text.primary' }}
                         >
-                          R{Number(product.price ?? 0).toFixed(2)}
+                          ${Number(product.price ?? 0).toFixed(2)}
                         </Typography>
                       </Box>
                     </Box>
@@ -1040,7 +1023,7 @@ function Testimonials() {
             maxWidth: 800,
           }}
         >
-          Loved by thousands of customers.
+          Reviews from our customers
         </Typography>
 
         <Box
