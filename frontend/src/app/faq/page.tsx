@@ -1,16 +1,9 @@
 'use client';
 
-import BackButton from '@/components/BackButton';
+import PageShell from '@/components/page/PageShell';
+import FAQItem from '@/components/page/FAQItem';
 import { motion } from 'framer-motion';
-import {
-  Container,
-  Box,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Box, Typography } from '@mui/material';
 
 const faqs = [
   {
@@ -95,95 +88,47 @@ const faqs = [
 
 export default function Faq() {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <Container
-        sx={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 3,
-          px: 4,
-          py: 8,
-          position: 'relative',
-        }}
-      >
-        <Box sx={{ position: 'absolute', top: 16, left: 16 }}>
-          <BackButton href="/" />
-        </Box>
-        <Box
+    <PageShell maxWidth>
+      <Box sx={{ textAlign: 'center', maxWidth: 680, width: '100%', mx: 'auto' }}>
+        <Typography
+          variant="h3"
           sx={{
-            textAlign: 'center',
-            maxWidth: 680,
-            width: '100%',
-            mx: 'auto',
+            fontWeight: 800,
+            letterSpacing: '-0.02em',
+            color: 'text.primary',
           }}
         >
-          <Typography
-            variant="h3"
-            sx={{
-              fontWeight: 800,
-              letterSpacing: '-0.02em',
-              color: 'text.primary',
-            }}
-          >
-            Frequently Asked Questions
-          </Typography>
-          <Box
-            sx={{
-              width: 48,
-              height: 4,
-              borderRadius: 2,
-              bgcolor: 'primary.main',
-              mx: 'auto',
-              mt: 2,
-              mb: 4,
-            }}
-          />
-          <Box sx={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-            {faqs.map((faq, i) => (
-              <Accordion
-                key={faq.question}
-                defaultExpanded={i === 0}
-                disableGutters
-                elevation={0}
-                sx={{
-                  borderRadius: 3,
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  bgcolor: 'background.paper',
-                  overflow: 'hidden',
-                  transition: 'border-color .25s, box-shadow .25s',
-                  '&:hover': {
-                    borderColor: 'primary.main',
-                    boxShadow: '0 6px 24px rgba(0,0,0,0.06)',
-                  },
-                  '&:before': { display: 'none' },
-                }}
-              >
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon sx={{ color: 'text.primary' }} />}
-                  sx={{
-                    px: 3,
-                    py: 1,
-                    '& .MuiAccordionSummary-content': { my: 1.5 },
-                  }}
-                >
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'text.primary' }}>
-                    {faq.question}
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails sx={{ px: 3, pb: 3, pt: 0 }}>{faq.answer}</AccordionDetails>
-              </Accordion>
-            ))}
-          </Box>
+          Frequently Asked Questions
+        </Typography>
+        <Box
+          sx={{
+            width: 48,
+            height: 4,
+            borderRadius: 2,
+            bgcolor: 'primary.main',
+            mx: 'auto',
+            mt: 2,
+            mb: 4,
+          }}
+        />
+        <Box
+          component={motion.div}
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+          }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
+          sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}
+        >
+          {faqs.map((faq) => (
+            <FAQItem key={faq.question} question={faq.question}>
+              {faq.answer}
+            </FAQItem>
+          ))}
         </Box>
-      </Container>
-    </motion.div>
+      </Box>
+    </PageShell>
   );
 }

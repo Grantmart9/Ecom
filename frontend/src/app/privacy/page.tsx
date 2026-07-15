@@ -1,12 +1,8 @@
 'use client'
 
-import BackButton from '@/components/BackButton'
-import { motion } from 'framer-motion'
-import {
-  Container,
-  Box,
-  Typography,
-} from '@mui/material'
+import PageShell from '@/components/page/PageShell';
+import LegalSection from '@/components/page/LegalSection';
+import { Box, Typography } from '@mui/material'
 
 const today = new Date().toLocaleDateString('en-ZA', { day: '2-digit', month: 'long', year: 'numeric' })
 
@@ -201,34 +197,22 @@ const sections = [
 
 export default function Privacy() {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <Container sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', gap: 4, px: 4, position: 'relative' }}>
-        <Box sx={{ position: 'absolute', top: 16, left: 16 }}>
-          <BackButton href="/" />
-        </Box>
-        <Box sx={{ textAlign: 'center', maxWidth: 720, width: '100%', mt: 8 }}>
-          <Typography variant="h3" sx={{ fontWeight: 800 }}>
-            Privacy Policy
-          </Typography>
-          <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
-            Last Updated: {today}
-          </Typography>
-        </Box>
-        <Box sx={{ maxWidth: 720, width: '100%' }}>
-          {sections.map((section) => (
-            <Box key={section.title} sx={{ mb: 4 }}>
-              <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
-                {section.title}
-              </Typography>
-              {section.content}
-            </Box>
-          ))}
-        </Box>
-      </Container>
-    </motion.div>
-  )
+    <PageShell maxWidth>
+      <Box sx={{ textAlign: 'center', maxWidth: 720, width: '100%', mt: 8 }}>
+        <Typography variant="h3" sx={{ fontWeight: 800 }}>
+          Privacy Policy
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+          Last Updated: {today}
+        </Typography>
+      </Box>
+      <Box sx={{ maxWidth: 720, width: '100%' }}>
+        {sections.map((section) => (
+          <LegalSection key={section.title} title={section.title}>
+            {section.content}
+          </LegalSection>
+        ))}
+      </Box>
+    </PageShell>
+  );
 }
