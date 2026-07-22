@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AppBar, Container, Toolbar, IconButton, Badge, Box, Typography, Stack } from '@mui/material';
+import { IconButton, Badge, Box, Typography, Stack } from '@mui/material';
 import { ShoppingCart, ArrowBack, Add, Remove, Delete } from '@mui/icons-material';
 import Link from 'next/link';
 import AnimatedBurger from './AnimatedBurger';
@@ -40,7 +40,11 @@ const navVariants = {
   exit: { x: '-100%' },
 };
 
-const transitionConfig = { type: 'tween' as const, duration: 0.35, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] };
+const transitionConfig = {
+  type: 'tween' as const,
+  duration: 0.35,
+  ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+};
 
 const backdropVariants = {
   initial: { opacity: 0 },
@@ -115,22 +119,6 @@ export default function Nav() {
         </Box>
       )}
 
-      <AppBar
-        position="static"
-        elevation={0}
-        sx={{
-          background: 'linear-gradient(to bottom, #FFFFFF 0%, #FFF8D8 100%)',
-          zIndex: (theme) => theme.zIndex.appBar + 100,
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Box sx={{ width: 48, height: 48, ml: 1 }} />
-          <Container maxWidth="lg" sx={{ flexGrow: 1 }}>
-            <Toolbar disableGutters sx={{ display: 'flex', alignItems: 'center', position: 'relative', py: 1.5 }} />
-          </Container>
-        </Box>
-      </AppBar>
-
       <AnimatePresence>
         {open && (
           <>
@@ -160,17 +148,30 @@ export default function Nav() {
             >
               {cartView ? (
                 <>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      mb: 3,
+                    }}
+                  >
                     <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '20px' }}>
                       Your Cart{count > 0 ? ` (${count})` : ''}
                     </Typography>
-                    <IconButton onClick={() => setCartView(false)} aria-label="Back to menu" sx={{ color: '#fff' }}>
+                    <IconButton
+                      onClick={() => setCartView(false)}
+                      aria-label="Back to menu"
+                      sx={{ color: '#fff' }}
+                    >
                       <ArrowBack />
                     </IconButton>
                   </Box>
 
                   {items.length === 0 ? (
-                    <Typography sx={{ color: '#fff', opacity: 0.85 }}>Your cart is empty.</Typography>
+                    <Typography sx={{ color: '#fff', opacity: 0.85 }}>
+                      Your cart is empty.
+                    </Typography>
                   ) : (
                     <Box sx={{ flex: 1, overflowY: 'auto' }}>
                       <Stack spacing={1.5}>
@@ -198,7 +199,10 @@ export default function Nav() {
                               }}
                             />
                             <Box sx={{ flex: 1, minWidth: 0 }}>
-                              <Typography noWrap sx={{ color: '#fff', fontWeight: 600, fontSize: '15px' }}>
+                              <Typography
+                                noWrap
+                                sx={{ color: '#fff', fontWeight: 600, fontSize: '15px' }}
+                              >
                                 {item.name}
                               </Typography>
                               <Typography sx={{ color: '#fff', opacity: 0.85, fontSize: '0.8rem' }}>
@@ -220,7 +224,9 @@ export default function Nav() {
                                 >
                                   <Remove fontSize="small" />
                                 </IconButton>
-                                <Typography sx={{ color: '#fff', minWidth: 18, textAlign: 'center' }}>
+                                <Typography
+                                  sx={{ color: '#fff', minWidth: 18, textAlign: 'center' }}
+                                >
                                   {item.quantity}
                                 </Typography>
                                 <IconButton
@@ -248,7 +254,9 @@ export default function Nav() {
                                 </IconButton>
                               </Box>
                             </Box>
-                            <Typography sx={{ color: '#fff', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                            <Typography
+                              sx={{ color: '#fff', fontWeight: 700, whiteSpace: 'nowrap' }}
+                            >
                               ${(Number(item.price) * item.quantity).toFixed(2)}
                             </Typography>
                           </Box>
@@ -353,7 +361,10 @@ export default function Nav() {
         )}
       </AnimatePresence>
 
-      <Box aria-hidden sx={{ position: 'relative', width: '100%', height: 160, overflow: 'hidden' }}>
+      <Box
+        aria-hidden
+        sx={{ position: 'relative', width: '100%', height: 160, overflow: 'hidden' }}
+      >
         <svg
           viewBox="0 0 1440 260"
           preserveAspectRatio="none"

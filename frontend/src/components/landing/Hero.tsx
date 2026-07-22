@@ -51,7 +51,7 @@ export default function Hero() {
           sx={{ textAlign: 'center', mb: { xs: 4, md: 6 }, mt: { xs: -10, md: -20 } }}
         >
           <Typography
-            style={{
+            sx={{
               color: '#fff',
               fontWeight: 400,
               fontSize: '3rem',
@@ -82,9 +82,9 @@ export default function Hero() {
               fontWeight: 800,
               lineHeight: 0.98,
               letterSpacing: '-0.03em',
-              mb: 4,
+              mb: 6,
               mt: { xs: 4, md: 0 },
-              maxWidth: 800,
+              maxWidth: 900,
               display: 'inline-block',
               px: 1.5,
               borderRadius: 2,
@@ -104,7 +104,7 @@ export default function Hero() {
             sx={{
               display: 'grid',
               gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-              gap: { xs: 4, md: 6 },
+              gap: { xs: 4, md: 8 },
               alignItems: 'center',
             }}
           >
@@ -114,8 +114,8 @@ export default function Hero() {
                   fontSize: { xs: '1.1rem', md: '1.35rem' },
                   color: 'black',
                   maxWidth: 620,
-                  mb: 5,
-                  lineHeight: 1.5,
+                  mb: 6,
+                  lineHeight: 1.6,
                 }}
               >
                 Our flavourless, completely soluble daily powder blends effortlessly into any food
@@ -131,22 +131,54 @@ export default function Hero() {
                 sx={{
                   display: 'grid',
                   gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-                  gap: { xs: 4, md: 3 },
+                  gap: { xs: 3, md: 3 },
                 }}
               >
                 {stats.map((s) => (
-                  <Box key={s.label} component={motion.div} variants={fadeUp}>
-                    <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
-                      <s.icon sx={{ color: '#F5C400', fontSize: 64 }} />
+                  <Box
+                    key={s.label}
+                    component={motion.div}
+                    variants={fadeUp}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      textAlign: 'center',
+                      p: 3,
+                      borderRadius: 4,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      bgcolor: 'background.paper',
+                      transition: 'transform .3s, box-shadow .3s, border-color .3s',
+                      '&:hover': {
+                        transform: 'translateY(-4px)',
+                        boxShadow: '0 12px 40px rgba(0,0,0,0.08)',
+                        borderColor: 'primary.main',
+                      },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        mb: 2,
+                        width: 56,
+                        height: 56,
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: 'linear-gradient(135deg, rgba(245,196,0,0.15) 0%, rgba(20,196,196,0.1) 100%)',
+                      }}
+                    >
+                      <s.icon sx={{ color: '#F5C400', fontSize: 28 }} />
                     </Box>
                     <Typography
                       sx={{
-                        fontSize: { xs: '1.1rem', md: '1.35rem' },
+                        fontSize: { xs: '0.85rem', md: '0.9rem' },
                         fontWeight: 700,
-                        letterSpacing: '0.08em',
+                        letterSpacing: '0.1em',
                         textTransform: 'uppercase',
-                        color: '#F5C400',
-                        textAlign: 'center',
+                        color: 'text.primary',
+                        lineHeight: 1.3,
                       }}
                     >
                       {s.label}
@@ -161,11 +193,12 @@ export default function Hero() {
                 position: 'relative',
                 width: '100%',
                 paddingTop: '100%',
-                borderRadius: 2,
+                borderRadius: 4,
                 overflow: 'hidden',
                 bgcolor: 'background.paper',
                 border: '1px solid',
                 borderColor: 'divider',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
               }}
             >
               <video

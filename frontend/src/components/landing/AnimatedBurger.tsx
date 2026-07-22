@@ -9,6 +9,12 @@ interface AnimatedBurgerProps {
   color: string;
 }
 
+const springTransition = {
+  type: 'spring',
+  stiffness: 260,
+  damping: 20,
+} as const;
+
 export default function AnimatedBurger({ open, onClick, color }: AnimatedBurgerProps) {
   const line: React.CSSProperties = {
     position: 'absolute',
@@ -26,19 +32,19 @@ export default function AnimatedBurger({ open, onClick, color }: AnimatedBurgerP
           component={motion.span}
           style={{ ...line, top: 0 }}
           animate={open ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          transition={springTransition}
         />
         <Box
           component={motion.span}
           style={{ ...line, top: 8 }}
           animate={open ? { opacity: 0 } : { opacity: 1 }}
-          transition={{ duration: 0.3 }}
+          transition={springTransition}
         />
         <Box
           component={motion.span}
           style={{ ...line, top: 16 }}
           animate={open ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          transition={springTransition}
         />
       </Box>
     </IconButton>
