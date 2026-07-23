@@ -453,6 +453,10 @@ export type UserSession = InferModel<typeof userSessions>;
 export type NewUserSession = InferModel<typeof userSessions, 'insert'>;
 export type Notification = InferModel<typeof notifications>;
 export type NewNotification = InferModel<typeof notifications, 'insert'>;
+export type PayfastSubscription = InferModel<typeof payfastSubscriptions>;
+export type NewPayfastSubscription = InferModel<typeof payfastSubscriptions, 'insert'>;
+export type PayfastRefund = InferModel<typeof payfastRefunds>;
+export type NewPayfastRefund = InferModel<typeof payfastRefunds, 'insert'>;
 
 export const usersRelations = relations(users, ({ many }) => ({
   addresses: many(userAddresses),
@@ -627,5 +631,78 @@ export const notificationsRelations = relations(notifications, ({ one }) => ({
   user: one(users, {
     fields: [notifications.userId],
     references: [users.id],
+  }),
+}));
+
+export const payfastSubscriptions = pgTable('payfast_subscriptions', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  orderId: uuid('order_id').references(() => orders.id, { onDelete: 'set null' }),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  paymentMethodId: integer('payment_method_id').references(() => userPaymentMethods.id, { onDelete: 'set null' }),
+  token: varchar('token', { length: 255 }).notNull().unique(),
+  frequency: integer('frequency').notNull(),
+  cycles: integer('cycles').notNull(),
+  cyclesComplete: integer('cycles_complete').default(0).notNull(),
+  amount: numeric('amount', { precision: 10, scale: 2 }).notNull(),
+  currency: varchar('currency', { length: 3 }).default('ZAR').notNull(),
+  status: varchar('status', { length: 50 }).notNull().default('ACTIVE'),
+  statusReason: text('status_reason'),
+  runDate: timestamp('run_date', { withTimezone: true }),
+  cancelledAt: timestamp('cancelled_at', { withTimezone: true }),
+  pausedAt: timestamp('paused_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  orderIdIdx: index('idx_payfast_subscriptions_order_id').on(table.orderId),
+  userIdIdx: index('idx_payfast_subscriptions_user_id').on(table.userId),
+  tokenIdx: unique('idx_payfast_subscriptions_token').on(table.token),
+  statusIdx: index('idx_payfast_subscriptions_status').on(table.status),
+}));
+
+export const payfastRefunds = pgTable('payfast_refunds', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  paymentId: varchar('payment_id', { length: 255 }).notNull(),
+  pfPaymentId: varchar('pf_payment_id', { length: 255 }).notNull(),
+  amount: numeric('amount', { precision: 10, scale: 2 }).notNull(),
+  currency: varchar('currency', { length: 3 }).default('ZAR').notNull(),
+  reason: text('reason').notNull(),
+  method: varchar('method', { length: 50 }).notNull(),
+  status: varchar('status', { length: 50 }).notNull().default('pending'),
+  notifyMerchant: boolean('notify_merchant').default(false).notNull(),
+  notifyBuyer: boolean('notify_buyer').default(false).notNull(),
+  bankAccountHolder: varchar('bank_account_holder', { length: 255 }),
+  bankName: varchar('bank_name', { length: 100 }),
+  bankBranchCode: varchar('bank_branch_code', { length: 20 }),
+  bankAccountNumber: varchar('bank_account_number', { length: 30 }),
+  bankAccountType: varchar('bank_account_type', { length: 20 }),
+  failureReason: text('failure_reason'),
+  completedAt: timestamp('completed_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  paymentIdIdx: index('idx_payfast_refunds_payment_id').on(table.paymentId),
+  pfPaymentIdIdx: index('idx_payfast_refunds_pf_payment_id').on(table.pfPaymentId),
+  statusIdx: index('idx_payfast_refunds_status').on(table.status),
+}));
+
+export const payfastSubscriptionsRelations = relations(payfastSubscriptions, ({ one }) => ({
+  order: one(orders, {
+    fields: [payfastSubscriptions.orderId],
+    references: [orders.id],
+  }),
+  user: one(users, {
+    fields: [payfastSubscriptions.userId],
+    references: [users.id],
+  }),
+  paymentMethod: one(userPaymentMethods, {
+    fields: [payfastSubscriptions.paymentMethodId],
+    references: [userPaymentMethods.id],
+  }),
+}));
+
+export const payfastRefundsRelations = relations(payfastRefunds, ({ one }) => ({
+  payment: one(orders, {
+    fields: [payfastRefunds.paymentId],
+    references: [orders.id],
   }),
 }));

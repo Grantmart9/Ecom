@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Button, Chip, Container, Stack, Typography } from '@mui/material';
+import Link from 'next/link';
 import { WaterDrop, LocalFlorist, LocalCafe } from '@mui/icons-material';
 import { useShopNow } from '@/components/landing/Nav';
 import { fadeUp, stagger } from '@/lib/animations';
@@ -22,49 +23,29 @@ const stats = [
 ];
 
 export default function Hero() {
-  useShopNow();
+  const shopNow = useShopNow();
 
   return (
     <Box
       component="section"
-      sx={{ position: 'relative', pt: { xs: 6, md: 10 }, pb: { xs: 12, md: 20 } }}
+      sx={{ position: 'relative', pt: { xs: 10, md: 14 }, pb: { xs: 10, md: 18 } }}
     >
       <Box
         aria-hidden
         sx={{
           position: 'absolute',
-          top: '-25%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '90vw',
-          height: '90vw',
-          maxWidth: 1000,
-          maxHeight: 1000,
-          background: `radial-gradient(circle, rgba(255,229,0,0.15) 0%, rgba(20,196,196,0) 60%)`,
+          top: '-18%',
+          right: '-10%',
+          width: '65vw',
+          height: '65vw',
+          maxWidth: 780,
+          maxHeight: 780,
+          background: 'radial-gradient(circle, rgba(20,196,196,0.18) 0%, rgba(20,196,196,0) 68%)',
+          filter: 'blur(8px)',
           pointerEvents: 'none',
         }}
       />
       <Container maxWidth="lg" sx={{ position: 'relative' }}>
-        <Box
-          component={motion.div}
-          variants={fadeUp}
-          sx={{ textAlign: 'center', mb: { xs: 4, md: 6 }, mt: { xs: -10, md: -20 } }}
-        >
-          <Typography
-            sx={{
-              color: '#fff',
-              fontWeight: 400,
-              fontSize: '3rem',
-              letterSpacing: '0.08em',
-              textDecoration: 'none',
-            }}
-          >
-            RECOVERY CO.
-          </Typography>
-        </Box>
-      </Container>
-
-      <Container maxWidth="lg" sx={{ position: 'relative', mt: { xs: 4, md: 2 } }}>
         <Box
           component={motion.div}
           variants={stagger}
@@ -72,55 +53,93 @@ export default function Hero() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          <Box component={motion.div} variants={fadeUp} />
-
-          <Typography
-            component={motion.h1}
-            variants={fadeUp}
-            sx={{
-              fontSize: { xs: '3rem', sm: '4.5rem', md: '6rem', lg: '7rem' },
-              fontWeight: 800,
-              lineHeight: 0.98,
-              letterSpacing: '-0.03em',
-              mb: 6,
-              mt: { xs: 4, md: 0 },
-              maxWidth: 900,
-              display: 'inline-block',
-              px: 1.5,
-              borderRadius: 2,
-            }}
-          >
-            Invisible to kids.
-            <br />
-            Powerful in{' '}
-            <Box component="span" sx={{ color: 'rgb(255, 209, 38)' }}>
-              purpose.
-            </Box>
-          </Typography>
-
           <Box
             component={motion.div}
             variants={fadeUp}
             sx={{
               display: 'grid',
               gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-              gap: { xs: 4, md: 8 },
+              gap: { xs: 5, md: 8 },
               alignItems: 'center',
             }}
           >
             <Box>
+              <Chip
+                label="Daily wellness for modern families"
+                sx={{
+                  mb: 3,
+                  px: 1,
+                  height: 34,
+                  borderRadius: '999px',
+                  bgcolor: 'rgba(255,255,255,0.78)',
+                  color: 'text.primary',
+                  border: '1px solid rgba(11,11,15,0.08)',
+                  backdropFilter: 'blur(14px)',
+                  fontWeight: 700,
+                  letterSpacing: '0.04em',
+                }}
+              />
+
+              <Typography
+                component={motion.h1}
+                variants={fadeUp}
+                sx={{
+                  fontSize: { xs: '3.2rem', sm: '4.5rem', md: '5.8rem', lg: '6.8rem' },
+                  fontWeight: 800,
+                  lineHeight: 0.95,
+                  letterSpacing: '-0.05em',
+                  mb: 3,
+                  maxWidth: 760,
+                }}
+              >
+                Wellness that disappears into the routine.
+              </Typography>
+
               <Typography
                 sx={{
-                  fontSize: { xs: '1.1rem', md: '1.35rem' },
-                  color: 'black',
-                  maxWidth: 620,
-                  mb: 6,
-                  lineHeight: 1.6,
+                  fontSize: { xs: '1.05rem', md: '1.2rem' },
+                  color: 'rgba(11,11,15,0.72)',
+                  maxWidth: 600,
+                  mb: 4,
+                  lineHeight: 1.7,
                 }}
               >
                 Our flavourless, completely soluble daily powder blends effortlessly into any food
                 or drink, providing convenient immune support for growing children.
               </Typography>
+
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 5 }}>
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={shopNow}
+                  sx={{
+                    px: 3.5,
+                    py: 1.5,
+                    borderRadius: '999px',
+                    boxShadow: '0 18px 40px rgba(20,196,196,0.22)',
+                  }}
+                >
+                  Shop now
+                </Button>
+                <Button
+                  component={Link}
+                  href="/about"
+                  variant="outlined"
+                  size="large"
+                  sx={{
+                    px: 3.5,
+                    py: 1.5,
+                    borderRadius: '999px',
+                    borderColor: 'rgba(11,11,15,0.12)',
+                    color: 'text.primary',
+                    bgcolor: 'rgba(255,255,255,0.58)',
+                    backdropFilter: 'blur(14px)',
+                  }}
+                >
+                  Learn more
+                </Button>
+              </Stack>
 
               <Box
                 component={motion.div}
@@ -145,14 +164,15 @@ export default function Hero() {
                       alignItems: 'center',
                       textAlign: 'center',
                       p: 3,
-                      borderRadius: 4,
-                      border: '1px solid',
-                      borderColor: 'divider',
-                      bgcolor: 'background.paper',
+                      borderRadius: 5,
+                      border: '1px solid rgba(255,255,255,0.7)',
+                      bgcolor: 'rgba(255,255,255,0.64)',
+                      backdropFilter: 'blur(18px)',
+                      boxShadow: '0 18px 38px rgba(18,45,45,0.08)',
                       transition: 'transform .3s, box-shadow .3s, border-color .3s',
                       '&:hover': {
                         transform: 'translateY(-4px)',
-                        boxShadow: '0 12px 40px rgba(0,0,0,0.08)',
+                        boxShadow: '0 18px 48px rgba(18,45,45,0.12)',
                         borderColor: 'primary.main',
                       },
                     }}
@@ -166,11 +186,11 @@ export default function Hero() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        background: 'linear-gradient(135deg, rgba(245,196,0,0.15) 0%, rgba(20,196,196,0.1) 100%)',
+                        background: 'linear-gradient(135deg, rgba(255,229,0,0.28) 0%, rgba(20,196,196,0.16) 100%)',
                       }}
                     >
                       <s.icon sx={{ color: '#F5C400', fontSize: 28 }} />
-                    </Box>
+                     </Box>
                     <Typography
                       sx={{
                         fontSize: { xs: '0.85rem', md: '0.9rem' },
@@ -193,12 +213,19 @@ export default function Hero() {
                 position: 'relative',
                 width: '100%',
                 paddingTop: '100%',
-                borderRadius: 4,
+                borderRadius: 6,
                 overflow: 'hidden',
-                bgcolor: 'background.paper',
-                border: '1px solid',
-                borderColor: 'divider',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
+                bgcolor: 'rgba(255,255,255,0.58)',
+                border: '1px solid rgba(255,255,255,0.72)',
+                boxShadow: '0 30px 80px rgba(18,45,45,0.16)',
+                backdropFilter: 'blur(18px)',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0) 20%, rgba(11,11,15,0.12) 100%)',
+                  pointerEvents: 'none',
+                },
               }}
             >
               <video

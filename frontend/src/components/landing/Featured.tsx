@@ -49,6 +49,18 @@ export default function Featured() {
         >
           <Box>
             <Typography
+              sx={{
+                textTransform: 'uppercase',
+                letterSpacing: '0.16em',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                color: 'rgba(11,11,15,0.56)',
+                mb: 1.5,
+              }}
+            >
+              Featured collection
+            </Typography>
+            <Typography
               variant="h2"
               sx={{
                 fontSize: { xs: '2.2rem', md: '3.5rem' },
@@ -57,7 +69,7 @@ export default function Featured() {
                 maxWidth: 700,
               }}
             >
-              Our product
+              Clean essentials with a sharper presentation.
             </Typography>
           </Box>
         </Box>
@@ -91,13 +103,14 @@ export default function Featured() {
                   <MuiLink component={Link} href="/shop" underline="none">
                     <Box
                       sx={{
-                        border: '1px solid',
-                        borderColor: 'divider',
-                        borderRadius: 4,
+                        border: '1px solid rgba(255,255,255,0.72)',
+                        borderRadius: 5,
                         overflow: 'hidden',
-                        bgcolor: 'background.paper',
-                        transition: 'border-color .3s',
-                        '&:hover': { borderColor: 'primary.main' },
+                        bgcolor: 'rgba(255,255,255,0.68)',
+                        backdropFilter: 'blur(18px)',
+                        boxShadow: '0 18px 44px rgba(18,45,45,0.08)',
+                        transition: 'border-color .3s, box-shadow .3s',
+                        '&:hover': { borderColor: 'primary.main', boxShadow: '0 24px 56px rgba(18,45,45,0.12)' },
                         '&:hover .p-arrow': { opacity: 1, transform: 'translate(0,0)' },
                       }}
                     >
@@ -134,12 +147,12 @@ export default function Featured() {
                       </Box>
                       <Box sx={{ p: 3 }}>
                         <Chip
-                          label={product.availabilityStatus || 'Available'}
+                          label={(product.availabilityStatus || 'Available').replaceAll('_', ' ')}
                           size="small"
                           sx={{
                             mb: 1.5,
                             bgcolor: 'rgba(20,196,196,0.12)',
-                            color: 'primary.main',
+                            color: '#0a7d7d',
                             fontSize: '0.7rem',
                             textTransform: 'capitalize',
                           }}

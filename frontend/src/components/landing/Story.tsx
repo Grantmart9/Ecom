@@ -21,7 +21,30 @@ export default function Story() {
             alignItems: 'center',
           }}
         >
-          <Box component={motion.div} variants={fadeUp}>
+          <Box
+            component={motion.div}
+            variants={fadeUp}
+            sx={{
+              p: { xs: 3, md: 5 },
+              borderRadius: 6,
+              bgcolor: 'rgba(255,255,255,0.62)',
+              border: '1px solid rgba(255,255,255,0.72)',
+              backdropFilter: 'blur(18px)',
+              boxShadow: '0 18px 48px rgba(18,45,45,0.08)',
+            }}
+          >
+            <Typography
+              sx={{
+                textTransform: 'uppercase',
+                letterSpacing: '0.16em',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                color: 'rgba(11,11,15,0.56)',
+                mb: 2,
+              }}
+            >
+              Why families choose us
+            </Typography>
             <Typography
               variant="h2"
               sx={{
@@ -30,15 +53,15 @@ export default function Story() {
                 letterSpacing: '-0.02em',
                 mb: 3,
                 maxWidth: 500,
-                color: 'black',
+                color: 'text.primary',
               }}
             >
-              More about our story
+              Built for real routines, not ideal ones.
             </Typography>
-            <Typography sx={{ color: 'black', lineHeight: 1.7, maxWidth: 480 }}>
+            <Typography sx={{ color: 'rgba(11,11,15,0.72)', lineHeight: 1.75, maxWidth: 520 }}>
               Recovery Co. was born from a simple challenge familiar to many parents: making daily
               immune support easy for children. Inspired by the realities of raising a busy toddler,
-              we created Super Sprinkle—a tasteless, fully soluble daily immune support powder that
+              we created Super Sprinkle-a tasteless, fully soluble daily immune support powder that
               blends effortlessly into the foods and drinks kids already enjoy. Made with carefully
               selected, science-backed ingredients, our mission is to help families build healthy
               habits through simple, effective products that fit naturally into everyday life,
@@ -53,14 +76,15 @@ export default function Story() {
             sx={{
               position: 'relative',
               width: '100%',
-              height:'100%',
-             
-              borderRadius: 4,
+              height: '100%',
+              minHeight: { xs: 320, md: 520 },
+              p: { xs: 3, md: 5 },
+              borderRadius: 6,
               overflow: 'hidden',
-              bgcolor: 'background.paper',
-              border: '1px solid',
-              borderColor: 'divider',
-              objectFit: 'cover',
+              bgcolor: 'rgba(255,255,255,0.58)',
+              border: '1px solid rgba(255,255,255,0.72)',
+              boxShadow: '0 22px 60px rgba(18,45,45,0.1)',
+              objectFit: 'contain',
             }}
           />
         </Box>
