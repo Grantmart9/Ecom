@@ -2,7 +2,7 @@
  * Admin single product API route - update and delete products.
  */
 import { NextResponse } from 'next/server';
-import { products, productImages, inventory, orderItems, cartItems, reviews } from '@/db/schema';
+import { products, productImages, inventory, inventoryMovements, orderItems, cartItems, reviews } from '@/db/schema';
 import type { NextRequest } from 'next/server';
 import { eq, and, sql } from 'drizzle-orm';
 import { z } from 'zod';
@@ -215,6 +215,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     }
 
     await db.delete(productImages).where(eq(productImages.productId, productId));
+    await db.delete(inventoryMovements).where(eq(inventoryMovements.productId, productId));
     await db.delete(inventory).where(eq(inventory.productId, productId));
     await db.delete(orderItems).where(eq(orderItems.productId, productId));
     await db.delete(cartItems).where(eq(cartItems.productId, productId));

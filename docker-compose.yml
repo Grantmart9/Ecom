@@ -19,6 +19,8 @@ services:
     build: ./frontend
     ports:
       - "3003:3003"
+    env_file:
+      - ./frontend/.env.local
     environment:
       DATABASE_URL: postgresql://user:password@db:5432/ecommerce
       NEXT_PUBLIC_APP_URL: http://localhost:3003

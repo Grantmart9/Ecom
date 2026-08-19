@@ -5,6 +5,16 @@
  */
 import crypto from 'crypto';
 
+function phpUrlEncode(value: string): string {
+  return encodeURIComponent(value)
+    .replace(/!/g, '%21')
+    .replace(/'/g, '%27')
+    .replace(/\(/g, '%28')
+    .replace(/\)/g, '%29')
+    .replace(/\*/g, '%2A')
+    .replace(/%20/g, '+');
+}
+
 export interface PayfastWebCheckoutParams {
   merchantId: string;
   merchantKey: string;
@@ -20,58 +30,41 @@ export interface PayfastWebCheckoutParams {
   nameLast?: string;
 }
 
-export function generateWebCheckoutSignature(params: PayfastWebCheckoutParams, merchantKey: string): string {
-  const data: Record<string, string> = {};
-
+function buildOrderedFields(params: PayfastWebCheckoutParams): Record<string, string> {
   const entries: Record<string, string | number | undefined> = {
     merchant_id: params.merchantId,
-    merchant_key: merchantKey,
-    amount: (params.amount / 100).toFixed(2),
-    item_name: params.itemName,
-    item_description: params.itemDescription,
+    merchant_key: params.merchantKey,
     return_url: params.returnUrl,
     cancel_url: params.cancelUrl,
     notify_url: params.notifyUrl,
-    m_payment_id: params.mPaymentId,
-    email_address: params.emailAddress,
     name_first: params.nameFirst,
     name_last: params.nameLast,
+    email_address: params.emailAddress,
+    m_payment_id: params.mPaymentId,
+    amount: (params.amount / 100).toFixed(2),
+    item_name: params.itemName,
+    item_description: params.itemDescription,
   };
 
-  for (const [key, value] of Object.entries(entries)) {
-    if (value !== undefined && value !== null && value !== '') {
-      data[key] = String(value);
-    }
-  }
+  return Object.fromEntries(
+    Object.entries(entries)
+    .filter(([, value]) => value !== undefined && value !== null && value !== '')
+      .map(([key, value]) => [key, String(value).trim()])
+  );
+}
 
-  const sortedKeys = Object.keys(data).sort((a, b) => a.localeCompare(b));
+export function generateWebCheckoutSignature(params: PayfastWebCheckoutParams, passphrase = ''): string {
+  const pairs = Object.entries(buildOrderedFields(params))
+    .map(([key, value]) => `${key}=${phpUrlEncode(value)}`);
 
-  const pairs = sortedKeys
-    .filter((key) => data[key] !== '')
-    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`);
-
-  const paramString = pairs.join('&');
+  const paramString = `${pairs.join('&')}${passphrase ? `&passphrase=${phpUrlEncode(passphrase.trim())}` : ''}`;
 
   return crypto.createHash('md5').update(paramString).digest('hex');
 }
 
 export function buildPayfastForm(params: PayfastWebCheckoutParams, signature: string) {
-  const formParams: Record<string, string> = {
-    merchant_id: params.merchantId,
-    merchant_key: params.merchantKey,
-    amount: (params.amount / 100).toFixed(2),
-    item_name: params.itemName,
-    return_url: params.returnUrl,
-    cancel_url: params.cancelUrl,
-    notify_url: params.notifyUrl,
+  return {
+    ...buildOrderedFields(params),
     signature,
   };
-
-  if (params.itemDescription) formParams.item_description = params.itemDescription;
-  if (params.mPaymentId) formParams.m_payment_id = params.mPaymentId;
-  if (params.emailAddress) formParams.email_address = params.emailAddress;
-  if (params.nameFirst) formParams.name_first = params.nameFirst;
-  if (params.nameLast) formParams.name_last = params.nameLast;
-
-  return formParams;
 }

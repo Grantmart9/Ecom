@@ -5,3 +5,4 @@ export { default as Story } from './Story';
 export { default as Featured, type Product } from './Featured';
 export { default as Testimonials } from './Testimonials';
 export { default as Footer } from './Footer';
+export { default as WaitlistModal } from './WaitlistModal';

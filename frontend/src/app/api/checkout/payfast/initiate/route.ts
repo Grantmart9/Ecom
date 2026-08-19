@@ -10,6 +10,13 @@ export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
+    if (!isPayfastConfigured()) {
+      return NextResponse.json(
+        { detail: 'Payfast is not configured. Set PAYFAST_MERCHANT_ID and PAYFAST_MERCHANT_KEY.' },
+        { status: 503 }
+      );
+    }
+
     const body = await req.json();
     const { userId, items, shippingAddressId, billingAddressId, shippingMethod, paymentMethod, currency, coupon, customerNotes } = body;
 
@@ -77,10 +84,6 @@ export async function POST(req: Request) {
       updatedAt: now,
     }).returning();
 
-    if (!isPayfastConfigured()) {
-      return NextResponse.json({ detail: 'Payfast is not configured' }, { status: 500 });
-    }
-
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
     const checkoutParams: PayfastWebCheckoutParams = {
@@ -98,7 +101,7 @@ export async function POST(req: Request) {
       nameLast: user.lastName || '',
     };
 
-    const signature = generateWebCheckoutSignature(checkoutParams, payfastConfig.merchantKey);
+    const signature = generateWebCheckoutSignature(checkoutParams, payfastConfig.passphrase);
     const formParams = buildPayfastForm(checkoutParams, signature);
 
     return NextResponse.json({
@@ -106,7 +109,9 @@ export async function POST(req: Request) {
       orderNumber: newOrder.orderNumber,
       paymentId: payment.id,
       formParams,
-      payfastUrl: 'https://www.payfast.co.za/eng/process',
+      payfastUrl: payfastConfig.environment === 'sandbox'
+        ? 'https://sandbox.payfast.co.za/eng/process'
+        : 'https://www.payfast.co.za/eng/process',
     });
   } catch (e) {
     console.error('[api/checkout/payfast/initiate]', e);

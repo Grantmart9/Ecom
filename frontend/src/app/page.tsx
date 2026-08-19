@@ -6,7 +6,7 @@
 'use client';
 
 import { Box } from '@mui/material';
-import { AnimatedBackground, Nav, Hero, Story, Featured, Testimonials, Footer } from '@/components/landing';
+import { Nav, Hero, Story, Featured, Testimonials, Footer, WaitlistModal } from '@/components/landing';
 
 export default function Home() {
   return (
@@ -31,7 +31,7 @@ export default function Home() {
         },
       }}
     >
-      <AnimatedBackground />
+      <WaitlistModal />
       <Nav />
       <Hero />
       <Story />

@@ -26,5 +26,5 @@ export function getPayfastBaseUrl(): string {
 }
 
 export function isPayfastConfigured(): boolean {
-  return Boolean(payfastConfig.merchantId && payfastConfig.merchantKey && payfastConfig.passphrase);
+  return Boolean(payfastConfig.merchantId && payfastConfig.merchantKey);
 }

@@ -3,6 +3,7 @@
 import { Container, Box, Typography, Card, CardContent, TextField, Button, Chip, Divider, Alert, Snackbar, CircularProgress, RadioGroup, FormControlLabel, Radio, FormControl, FormLabel } from '@mui/material';
 import { useState } from 'react';
 import { useAppSelector } from '@/lib/hooks';
+import { WAITLIST_DISCOUNT_KEY } from '@/components/landing/WaitlistModal';
 
 type CartItem = {
   productId: string;
@@ -14,6 +15,18 @@ type CartItem = {
 
 export default function CheckoutPage() {
   const cartItems = useAppSelector((s) => s.cart.items) as CartItem[];
+  const [waitlistReward] = useState<{ email?: string; percentage?: number } | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const reward = window.localStorage.getItem(WAITLIST_DISCOUNT_KEY);
+    if (!reward) return null;
+
+    try {
+      return JSON.parse(reward);
+    } catch {
+      window.localStorage.removeItem(WAITLIST_DISCOUNT_KEY);
+      return null;
+    }
+  });
 
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState<{
@@ -26,11 +39,12 @@ export default function CheckoutPage() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
   const [isProcessing, setIsProcessing] = useState(false);
   const [customerName, setCustomerName] = useState('');
-  const [customerEmail, setCustomerEmail] = useState('');
+  const [customerEmail, setCustomerEmail] = useState(waitlistReward?.email ?? '');
+  const waitlistDiscount = waitlistReward?.percentage === 10;
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price || 0) * item.quantity, 0);
   const shipping = subtotal > 0 ? 3000 : 0;
-  const discountAmount = appliedCoupon?.discountAmount ?? 0;
+  const discountAmount = appliedCoupon?.discountAmount ?? (waitlistDiscount ? subtotal * 0.1 : 0);
   const total = subtotal + shipping - discountAmount;
 
   const validateMutation = {
@@ -97,7 +111,13 @@ export default function CheckoutPage() {
         })),
         currency: 'ZAR',
         customerNotes: customerName,
-        coupon: appliedCoupon || undefined,
+        coupon: appliedCoupon || (waitlistDiscount ? {
+          code: 'WAITLIST10',
+          discountType: 'percentage',
+          discountValue: 10,
+          discountAmount,
+          finalTotal: subtotal - discountAmount,
+        } : undefined),
       };
       const res = await fetch('/api/checkout/payfast/initiate', {
         method: 'POST',
@@ -209,10 +229,10 @@ export default function CheckoutPage() {
                 <Typography variant="body2">R{shipping.toFixed(2)}</Typography>
               </Box>
 
-              {appliedCoupon && (
+              {(appliedCoupon || waitlistDiscount) && (
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', color: 'success.main' }}>
-                  <Typography variant="body2">Discount ({appliedCoupon.code})</Typography>
-                  <Typography variant="body2">-R{appliedCoupon.discountAmount.toFixed(2)}</Typography>
+                  <Typography variant="body2">Discount ({appliedCoupon?.code ?? 'WAITLIST10'})</Typography>
+                  <Typography variant="body2">-R{discountAmount.toFixed(2)}</Typography>
                 </Box>
               )}
 
@@ -231,15 +251,15 @@ export default function CheckoutPage() {
         <Card>
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>Coupon Code</Typography>
-            {appliedCoupon ? (
+            {appliedCoupon || waitlistDiscount ? (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1, bgcolor: 'success.light', borderRadius: 1 }}>
                 <Chip
-                  label={`${appliedCoupon.code} - ${appliedCoupon.discountType === 'percentage' ? `${appliedCoupon.discountValue}% off` : `R${appliedCoupon.discountValue.toFixed(2)} off`}`}
+                  label={appliedCoupon ? `${appliedCoupon.code} - ${appliedCoupon.discountType === 'percentage' ? `${appliedCoupon.discountValue}% off` : `R${appliedCoupon.discountValue.toFixed(2)} off`}` : 'WAITLIST10 - 10% off'}
                   color="success"
-                  onDelete={handleRemoveCoupon}
+                  onDelete={appliedCoupon ? handleRemoveCoupon : undefined}
                 />
                 <Typography variant="body2" sx={{ ml: 'auto', fontWeight: 600, color: 'success.dark' }}>
-                  -R{appliedCoupon.discountAmount.toFixed(2)}
+                  -R{discountAmount.toFixed(2)}
                 </Typography>
               </Box>
             ) : (

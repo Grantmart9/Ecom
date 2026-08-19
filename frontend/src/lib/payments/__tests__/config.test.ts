@@ -2,8 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { payfastConfig, getPayfastBaseUrl, isPayfastConfigured } from '../config';
 
 describe('payfastConfig', () => {
-  it('reads merchant ID from env', () => {
+  it('reads merchant credentials from env', () => {
     expect(payfastConfig.merchantId).toBe(process.env.PAYFAST_MERCHANT_ID || '');
+    expect(payfastConfig.merchantKey).toBe(process.env.PAYFAST_MERCHANT_KEY || '');
   });
 
   it('defaults version to v1 when not set', () => {
@@ -22,13 +23,7 @@ describe('getPayfastBaseUrl', () => {
 });
 
 describe('isPayfastConfigured', () => {
-  it('returns true when both merchantId and passphrase are set', () => {
-    const result = isPayfastConfigured();
-    const configured = result;
-    if (process.env.PAYFAST_MERCHANT_ID && process.env.PAYFAST_PASSPHRASE) {
-      expect(configured).toBe(true);
-    } else {
-      expect(configured).toBe(false);
-    }
+  it('requires merchant ID and key', () => {
+    expect(isPayfastConfigured()).toBe(Boolean(process.env.PAYFAST_MERCHANT_ID && process.env.PAYFAST_MERCHANT_KEY));
   });
 });

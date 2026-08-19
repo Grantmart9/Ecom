@@ -161,7 +161,7 @@ export default function Featured() {
                           {product.name}
                         </Typography>
                         <Typography sx={{ fontWeight: 700, fontSize: '1.3rem', color: 'text.primary' }}>
-                          ${Number(product.price ?? 0).toFixed(2)}
+                          R{Number(product.price ?? 0).toFixed(2)}
                         </Typography>
                       </Box>
                     </Box>
